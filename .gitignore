@@ -1,0 +1,4 @@
+*.iso
+src/build/*
+src/*.bin
+iso/boot/*.bin

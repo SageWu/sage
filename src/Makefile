@@ -4,18 +4,19 @@ qemu = qemu-system-i386
 cflags = -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 lflags = -ffreestanding -O2 -nostdlib -lgcc
 
-src = $(wildcard *.c) $(notdir $(wildcard lib/*.c))
+src = $(wildcard *.c) $(notdir $(wildcard lib/*.c)) $(notdir $(wildcard driver/*.c))
 linker = linker.ld
 target = sage.bin
 iso = sage.iso
 
 vpath %.c lib
+vpath %.c driver
 
 $(target) : $(src:%.c=build/%.o) build/boot.o
 	$(cc) -T $(linker) -o $@ $(lflags) $^
 	cp $(target) ../iso/boot/
 	grub-mkrescue -o ../$(iso) ../iso/
-	$(qemu) ../$(iso)
+	$(qemu) ../$(iso) -d int -no-reboot -monitor stdio
 
 build/boot.o : boot.s
 	$(as) $< -o $@
